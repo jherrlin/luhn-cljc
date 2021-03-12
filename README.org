@@ -1,0 +1,47 @@
+#+TITLE: luhn-cljc
+
+Validate luhn strings with Cljc, if used in Clojure is's possble to generate
+them.
+
+* Usage
+
+  #+BEGIN_SRC clojure :results output code
+    (ns user
+      (:require
+       [clojure.spec.alpha :as s]
+       [clojure.test.check.generators :as gen]
+       [se.jherrlin.luhn :as luhn]))
+
+
+    (s/valid? ::luhn/luhn "0112046438")            ;; => true
+    (s/valid? ::luhn/luhn "967425547947112914710") ;; => true
+    (s/valid? ::luhn/luhn "1234567890")            ;; => false
+
+    (luhn/validate "0112046438")                   ;; => "0112046438"
+    (luhn/validate "967425547947112914710")        ;; => "967425547947112914710"
+    (luhn/validate "1234567890")                   ;; => nil
+
+    (gen/generate (luhn/generator 10))             ;; => "58878004132"
+    (gen/generate (luhn/generator 15))             ;; => "7492917573807471"
+
+
+    ;; Create a new spec that cen be used to validate and generate Swedish person
+    ;; numbers
+    (s/def ::swedish-person-nr
+      (s/with-gen
+        (s/and string? #(= 10 (count %)) luhn/validate)
+        (fn [] (luhn/generator 10))))
+
+    (s/valid? ::swedish-person-nr "Hejsan")     ;; => false
+    (s/valid? ::swedish-person-nr "8909073374") ;; => true
+    (gen/generate (s/gen ::swedish-person-nr))  ;; => "6336989121"
+
+  #+END_SRC
+
+* Update deps
+
+  Instructions on how to update dependencies.
+
+  #+BEGIN_SRC shell :results output code
+    clojure -Moutdated --write
+  #+END_SRC
