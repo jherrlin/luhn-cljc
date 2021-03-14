@@ -1,7 +1,6 @@
 #+TITLE: luhn-cljc
 
-Validate luhn strings with Cljc, if used in Clojure is's possble to generate
-them.
+Validate and generate luhn strings.
 
 * Usage
 
@@ -36,6 +35,13 @@ them.
     (s/valid? ::swedish-person-nr "8909073374") ;; => true
     (gen/generate (s/gen ::swedish-person-nr))  ;; => "6336989121"
 
+  #+END_SRC
+
+* Run tests
+
+  #+BEGIN_SRC shell
+    clojure -M:clj-test-runner
+    clojure -M:cljs-test-runner
   #+END_SRC
 
 * Update deps
